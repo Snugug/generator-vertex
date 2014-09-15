@@ -19,11 +19,13 @@
   "files": [
     "app",
     "shared.js",
+    "script-base.js",
     "controller",
     "directive",
     "factory",
     "filter",
-    "service"
+    "service",
+    "templates"
   ],
   "keywords": [
     "yeoman-generator"
