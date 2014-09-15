@@ -24,14 +24,16 @@
     "yeoman-generator"
   ],
   "dependencies": {
-    "yeoman-generator": "^0.17.0",
-    "chalk": "^0.5.0",
-    "yosay": "^0.3.0"
+    "chalk": "^0.5",
+    "underscore.string": "^2.3",
+    "yeoman-generator": "^0.17",
+    "yosay": "^0.3"
   },
   "devDependencies": {
     "mocha": "*"
   },
   "peerDependencies": {
-    "yo": ">=1.0.0"
+    "yo": ">=1.0.0",
+    "generator-north": "^1.4"
   }
 }

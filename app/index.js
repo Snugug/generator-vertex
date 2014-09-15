@@ -5,8 +5,13 @@ var util = require('util'),
     path = require('path'),
     yeoman = require('yeoman-generator');
 
+// Custom Dependencies
 var shared = require('../shared.js'),
-    chalk = require('chalk');
+    chalk = require('chalk'),
+    _s = require('underscore.string');
+
+// Generator Variables
+var settings = {};
 
 var VertexGenerator = yeoman.generators.Base.extend({
   initializing: function () {
@@ -23,17 +28,39 @@ var VertexGenerator = yeoman.generators.Base.extend({
       '  Works well with North. ' + chalk.cyan('http://pointnorth.io\n'));
 
     var prompts = [{
-      type: 'confirm',
-      name: 'someOption',
-      message: 'Would you like to enable this option?',
-      default: true
+      type: 'string',
+      name: 'projectName',
+      message: 'What\'s your project\'s name?' + chalk.red(' (Required)'),
+      validate: function (input) {
+        if (input === '') {
+          return 'Please enter your project\'s name';
+        }
+        return true;
+      }
     }];
 
     this.prompt(prompts, function (props) {
-      this.someOption = props.someOption;
+      this.projectName = props.projectName;
+      this.slug = _s.slugify(this.projectName);
+      this.folder = this.options['init'] ? './' : this.slug + '/';
 
       done();
     }.bind(this));
+  },
+
+  enforceFolderName: function () {
+    this.destinationRoot(this.folder);
+  },
+
+  saveSettings: function () {
+    settings = {
+      project: this.projectName,
+      slug: this.slug,
+      folder: this.folder,
+      runner: 'Gulp'
+    };
+
+    this.config.set(settings);
   },
 
   // writing: {
@@ -54,6 +81,15 @@ var VertexGenerator = yeoman.generators.Base.extend({
   // end: function () {
     // this.installDependencies();
   // }
+
+  invokes: function () {
+    // Compose with the North JSHint subgenerator to get the hint task
+    this.composeWith('north:jshint', {
+      options: {
+        runner: 'Gulp'
+      }
+    });
+  }
 });
 
 module.exports = VertexGenerator;
