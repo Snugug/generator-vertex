@@ -8,6 +8,7 @@ var util = require('util'),
 // Custom Dependencies
 var shared = require('../shared.js'),
     chalk = require('chalk'),
+    validator = require('validator'),
     _s = require('underscore.string');
 
 // Generator Variables
@@ -27,36 +28,58 @@ var VertexGenerator = yeoman.generators.Base.extend({
     this.log('  An opinionated Angular generator.\n' +
       '  Works well with North. ' + chalk.cyan('http://pointnorth.io\n'));
 
-    var prompts = [{
-      type: 'string',
-      name: 'projectName',
-      message: 'What\'s your project\'s name?' + chalk.red(' (Required)'),
-      validate: function (input) {
-        if (input === '') {
-          return 'Please enter your project\'s name';
+    var prompts = [
+      {
+        type: 'string',
+        name: 'projectName',
+        message: 'What\'s your project\'s name?' + chalk.red(' (Required)'),
+        validate: function (input) {
+          if (input === '') {
+            return 'Please enter your project\'s name';
+          }
+          return true;
         }
-        return true;
+      },
+      {
+        type: 'string',
+        name: 'projectId',
+        message: 'Provide a 3 letter abbreviation for your project.' + chalk.red(' (Required)'),
+        validate: function (input) {
+          if (input === '') {
+            return 'Please enter a 3 letter abbreviation';
+          }
+          else if (input.length !== 3) {
+            return 'Abbreviation must be 3 letters long';
+          }
+          else if (!validator.isAlpha(input)) {
+            return 'Abbreviation must only contain letters';
+          }
+
+          return true;
+        }
       }
-    }];
+    ];
 
     this.prompt(prompts, function (props) {
       this.projectName = props.projectName;
       this.slug = _s.slugify(this.projectName);
-      this.folder = this.options['init'] ? './' : this.slug + '/';
+      this.pid = props.projectId.toUpperCase();
 
       done();
     }.bind(this));
   },
 
   enforceFolderName: function () {
-    this.destinationRoot(this.folder);
+    if (!this.options['init']) {
+      this.destinationRoot(this.slug);
+    }
   },
 
   saveSettings: function () {
     settings = {
       project: this.projectName,
       slug: this.slug,
-      folder: this.folder,
+      pid: this.pid,
       runner: 'Gulp'
     };
 

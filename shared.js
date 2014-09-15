@@ -1,5 +1,10 @@
+'use strict'
+
 var chalk = require('chalk');
 
+//////////////////////////////
+// Welcome Message
+//////////////////////////////
 var welcome = function () {
   var welcome = '' +
     chalk.red('           __') + '\n' +
@@ -12,5 +17,25 @@ var welcome = function () {
   return welcome;
 }
 
+var abbr = function (identifier) {
+  var abbrHash = {
+    'controller': 'ctrl',
+    'directive': 'dir',
+    'factory': 'fctry',
+    'filter': 'fltr',
+    'service': 'svc'
+  }
 
+  if (abbrHash[identifier]) {
+    return abbrHash[identifier];
+  }
+  else {
+    return false;
+  }
+}
+
+//////////////////////////////
+// Exports
+//////////////////////////////
 module.exports.welcome = welcome;
+module.exports.abbr = abbr;
